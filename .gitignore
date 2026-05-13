@@ -465,7 +465,7 @@ CLAUDE.md
 ### SwiftPackageManager ###
 Packages
 xcuserdata
-*.xcodeproj
+# *.xcodeproj  # Commented out - conflicts with Xcode Patch section below
 
 
 ### SwiftPM ###
