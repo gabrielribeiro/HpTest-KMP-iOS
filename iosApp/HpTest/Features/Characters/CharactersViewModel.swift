@@ -5,7 +5,7 @@
 //  Created by Gabriel Ribeiro on 13/05/26.
 //
 
-import Observation
+import SwiftUI
 import shared
 
 @MainActor
@@ -14,8 +14,10 @@ final class CharactersViewModel {
 
     // MARK: - Properties
 
-    /// All characters fetched from the API (unfiltered).
+    /// State fetched from the API (unfiltered).
     private(set) var dataState: DataState<[Character]> = .initial
+
+    var activeFilter: CharacterFilter = .all
 
     /// KMP repository
     private let repository: CharacterRepository
@@ -41,7 +43,7 @@ final class CharactersViewModel {
         }
 
         do {
-            let result: NetworkResult<NSArray> = try await repository.fetchCharacters()
+            let result: NetworkResult<NSArray> = try await repository.fetchCharacters(filter: activeFilter)
 
             if let data = result.successData {
                 let dtos: [CharacterDTO] = data.compactMap { $0 as? CharacterDTO }
@@ -53,7 +55,9 @@ final class CharactersViewModel {
 
                 let characters = dtos.compactMap(Character.init)
 
-                dataState = .ready(characters)
+                withAnimation {
+                    dataState = .ready(characters)
+                }
             } else if let message = result.errorMessage {
                 dataState = .error(message)
             } else {
@@ -66,6 +70,21 @@ final class CharactersViewModel {
         }
 
         loadingTask.cancel()
+    }
+}
+
+extension CharacterFilter: CaseIterable {
+    public static var allCases: [CharacterFilter] {
+        [.all, .students, .staff]
+    }
+
+    var title: String {
+        switch self {
+            case .all: "All"
+            case .students: "Students"
+            case .staff: "Staff"
+            default: "Unknown"
+        }
     }
 }
 

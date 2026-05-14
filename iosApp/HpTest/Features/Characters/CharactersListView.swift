@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct CharactersListView: View {
 
@@ -14,8 +15,26 @@ struct CharactersListView: View {
 
     var body: some View {
         stateView
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Characters filter", selection: $viewModel.activeFilter) {
+                        ForEach(CharacterFilter.allCases, id: \.self) {
+                            Text($0.title)
+                                .tag($0)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+            }
             .task {
                 if viewModel.dataState.isInitial {
+                    await viewModel.fetchCharacters()
+                }
+            }
+            .onChange(of: viewModel.activeFilter) { old, new in
+                guard old != new else { return }
+                
+                Task {
                     await viewModel.fetchCharacters()
                 }
             }

@@ -33,12 +33,57 @@ class CharacterRepository {
      * when (val result = repository.fetchCharacters()) {
      *     is NetworkResult.Success -> displayCharacters(result.data)
      *     is NetworkResult.Error -> showError(result.message)
-     *     is NetworkResult.Loading -> showLoading()
      * }
      * ```
      */
     suspend fun fetchCharacters(): NetworkResult<List<CharacterDTO>> {
         return apiClient.fetchCharacters()
+    }
+
+    /**
+     * Fetches characters and applies a filter.
+     * Convenience method that combines fetching and filtering in one operation.
+     *
+     * @param filter The filter to apply (ALL, STUDENTS, or STAFF)
+     * @return NetworkResult.Success containing filtered list of characters,
+     *         or NetworkResult.Error if the request fails
+     *
+     * Example usage:
+     * ```
+     * val repository = CharacterRepository()
+     * when (val result = repository.fetchCharacters(CharacterFilter.STUDENTS)) {
+     *     is NetworkResult.Success -> displayCharacters(result.data)
+     *     is NetworkResult.Error -> showError(result.message)
+     * }
+     * ```
+     */
+    suspend fun fetchCharacters(filter: CharacterFilter): NetworkResult<List<CharacterDTO>> {
+        return when (val result = apiClient.fetchCharacters()) {
+            is NetworkResult.Success -> {
+                val filteredCharacters = filter.apply(result.data)
+                NetworkResult.Success(filteredCharacters)
+            }
+            is NetworkResult.Error -> result
+        }
+    }
+
+    /**
+     * Filters an existing list of characters without making a new API request.
+     * Useful when you already have the data and want to apply different filters.
+     *
+     * @param characters The list of characters to filter
+     * @param filter The filter to apply
+     * @return A new list containing only characters matching the filter criteria
+     *
+     * Example usage:
+     * ```
+     * val allCharacters = fetchCharacters().getOrNull() ?: emptyList()
+     * val students = filterCharacters(allCharacters, CharacterFilter.STUDENTS)
+     * val staff = filterCharacters(allCharacters, CharacterFilter.STAFF)
+     * ```
+     */
+    fun filterCharacters(characters: List<CharacterDTO>, filter: CharacterFilter): List<CharacterDTO> {
+        return filter.apply(characters)
     }
 
     /**
