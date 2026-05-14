@@ -96,6 +96,18 @@ struct Character: Identifiable, Hashable {
         self.alive = kmpCharacter.alive
         self.image = kmpCharacter.image
     }
+
+    var imageURL: URL? {
+        let trimmed = image.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            !trimmed.isEmpty,
+            let url = URL(string: trimmed),
+            let scheme = url.scheme?.lowercased(),
+            (scheme == "https" || scheme == "http"),
+            url.host != nil
+        else { return nil }
+        return url
+    }
 }
 
 struct Wand: Hashable {

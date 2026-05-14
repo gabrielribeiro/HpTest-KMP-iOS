@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		92A4C8FF2FB50A5400496360 /* shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92A4C8FC2FB5077E00496360 /* shared.framework */; };
+		92C8B7932FB6581D002141B4 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 92C8B7922FB6581D002141B4 /* CachedAsyncImage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92A4C8FF2FB50A5400496360 /* shared.framework in Frameworks */,
+				92C8B7932FB6581D002141B4 /* CachedAsyncImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +83,7 @@
 			);
 			name = HpTest;
 			packageProductDependencies = (
+				92C8B7922FB6581D002141B4 /* CachedAsyncImage */,
 			);
 			productName = HpTest;
 			productReference = 924BE45A2FB4F5D500621476 /* HpTest.app */;
@@ -110,6 +113,9 @@
 			);
 			mainGroup = 924BE4512FB4F5D500621476;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				92C8B7912FB6581D002141B4 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 924BE45B2FB4F5D500621476 /* Products */;
 			projectDirPath = "";
@@ -377,6 +383,26 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		92C8B7912FB6581D002141B4 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
+			requirement = {
+				kind = versionRange;
+				maximumVersion = 2.0.0;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		92C8B7922FB6581D002141B4 /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92C8B7912FB6581D002141B4 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
+			productName = CachedAsyncImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 924BE4522FB4F5D500621476 /* Project object */;
 }

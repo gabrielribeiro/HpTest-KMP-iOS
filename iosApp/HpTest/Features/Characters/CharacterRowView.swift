@@ -6,34 +6,45 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct CharacterRowView: View {
     let character: Character
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
-            AsyncImage(url: URL(string: character.image)) { phase in
-                switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(width: 60, height: 80)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 60, height: 80)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    case .failure:
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 60, height: 80)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .foregroundColor(.gray)
-                            )
-                    @unknown default:
-                        EmptyView()
+            if let characterImageURL = character.imageURL {
+                CachedAsyncImage(url: characterImageURL) { phase in
+                    switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 60, height: 80)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 60, height: 80)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        case .failure:
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 60, height: 80)
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .foregroundColor(.gray)
+                                )
+                        @unknown default:
+                            EmptyView()
+                    }
                 }
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: 60, height: 80)
+                    .overlay(
+                        Image(systemName: "person.slash.fill")
+                            .foregroundColor(.gray)
+                    )
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -53,6 +64,8 @@ struct CharacterRowView: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
+
+                Spacer()
             }
 
             Spacer()
