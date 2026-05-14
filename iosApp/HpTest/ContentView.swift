@@ -11,10 +11,15 @@ struct ContentView: View {
     
     @State private var selectedCharacter: Character?
     @Environment(\.favoritesManager) private var favoritesManager
+    @Environment(\.houseManager) private var houseManager
 
     var body: some View {
         NavigationSplitView {
-            CharactersListView(favoritesManager: favoritesManager, selectedCharacter: $selectedCharacter)
+            CharactersListView(
+                favoritesManager: favoritesManager,
+                houseManager: houseManager,
+                selectedCharacter: $selectedCharacter
+            )
         } detail: {
             if let selectedCharacter {
                 CharacterDetailView(favoritesManager: favoritesManager, character: selectedCharacter)

@@ -18,12 +18,18 @@ final class CharactersViewModel {
     private(set) var dataState: DataState<[Character]> = .initial
 
     var activeFilter: ListFilter = .all
+    var preferredHouse: House? = nil
+
+    var preferredHouseTitle: String {
+        preferredHouse?.title ?? "Select House"
+    }
 
     // MARK: - Dependencies
 
     /// KMP repository
     private let repository: CharacterRepository
     private let favoritesManager: FavoritesManager
+    private let houseManager: HouseManager
 
     // MARK: - Initialization
 
@@ -32,12 +38,29 @@ final class CharactersViewModel {
     /// - Parameters:
     ///   - repository: The KMP repository for fetching characters
     ///   - favoritesManager: Manager for tracking favorite characters
-    init(repository: CharacterRepository = CharacterRepository(), favoritesManager: FavoritesManager) {
+    ///   - houseManager: Manager for tracking user's house
+    init(
+        repository: CharacterRepository = CharacterRepository(),
+        favoritesManager: FavoritesManager,
+        houseManager: HouseManager
+    ) {
         self.repository = repository
         self.favoritesManager = favoritesManager
+        self.houseManager = houseManager
     }
 
     // MARK: - Public Methods
+
+    /// Fetch user's preferred house
+    func fetchPreferredHouse() async {
+        self.preferredHouse = houseManager.preferredHouse
+    }
+
+    /// Set user's preferred house
+    func setPreferredHouse(_ house: House) {
+        houseManager.preferredHouse = house
+        preferredHouse = house
+    }
 
     /// Fetches all characters from the API
     func fetchCharacters() async {

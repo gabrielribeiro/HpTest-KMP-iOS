@@ -14,6 +14,7 @@ struct CharacterDetailView: View {
 
     let favoritesManager: FavoritesManager
     let character: Character
+    @Environment(\.houseManager) private var houseManager
 
     // MARK: - States
 
@@ -34,8 +35,11 @@ struct CharacterDetailView: View {
                     actorInfoSection
                 }
                 .padding()
+
+                Spacer(minLength: 40)
             }
         }
+        .background(houseManager.gradientBackground)
         .ignoresSafeArea()
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -54,9 +58,6 @@ struct CharacterDetailView: View {
 
     private var heroSection: some View {
         ZStack(alignment: .bottom) {
-            Rectangle()
-                .frame(height: 400)
-
             if let characterImageURL = character.imageURL {
                 CachedAsyncImage(url: characterImageURL) { phase in
                     switch phase {
@@ -88,9 +89,9 @@ struct CharacterDetailView: View {
                             VStack {
                                 Image(systemName: "person.fill")
                                     .font(.system(size: 80))
-                                    .foregroundColor(.white.opacity(0.6))
+                                    .foregroundColor(houseManager.textColor.opacity(0.6))
                                 Text("Image unavailable")
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundColor(houseManager.textColor.opacity(0.8))
                             }
                             .frame(height: 400)
                         @unknown default:
@@ -101,17 +102,16 @@ struct CharacterDetailView: View {
                 VStack {
                     Image(systemName: "person.slash.fill")
                         .font(.system(size: 80))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(houseManager.textColor.opacity(0.6))
                     Text("Image unavailable")
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(houseManager.textColor.opacity(0.8))
                 }
                 .frame(height: 400)
             }
 
             Text(character.name)
                 .font(.largeTitle.bold())
-                .shadow(color: .black.opacity(0.8), radius: 4)
-                .foregroundStyle(.white)
+                .foregroundStyle(houseManager.gradientBackground)
                 .frame(maxWidth: .infinity, alignment: .bottom)
                 .padding()
         }
@@ -199,6 +199,7 @@ struct CharacterDetailView: View {
         Text(title)
             .font(.title3)
             .fontWeight(.bold)
+            .foregroundStyle(houseManager.textColor)
     }
 
     /// Information row with icon, label, and value
@@ -208,13 +209,13 @@ struct CharacterDetailView: View {
                 .labelReservedIconWidth(24)
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundColor(.secondary)
+                .foregroundColor(houseManager.secondaryTextColor)
 
             Spacer()
 
             Text(value.localizedCapitalized)
                 .font(.body)
-                .foregroundColor(.primary)
+                .foregroundColor(houseManager.textColor)
                 .frame(alignment: .trailing)
                 .multilineTextAlignment(.trailing)
         }

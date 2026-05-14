@@ -14,6 +14,7 @@ struct CharacterRowView: View {
     let character: Character
     let isFavorite: Bool
     let onFavoriteToggle: () -> Void
+    @Environment(\.houseManager) private var houseManager
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
@@ -54,18 +55,18 @@ struct CharacterRowView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(character.name)
                     .font(.headline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(houseManager.textColor)
                     .lineLimit(2)
 
                 Text(character.house)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(houseManager.secondaryTextColor)
                     .lineLimit(1)
 
                 if let actor = character.actor, !actor.isEmpty {
                     Text(actor)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(houseManager.secondaryTextColor)
                         .lineLimit(1)
                 }
 
@@ -84,7 +85,7 @@ struct CharacterRowView: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .padding()
-        .background(Color(uiColor: .systemGroupedBackground))
+        .background(houseManager.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .contentShape(RoundedRectangle(cornerRadius: 10))
     }

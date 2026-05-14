@@ -1,5 +1,5 @@
 //
-//  Models.swift
+//  Character.swift
 //  HpTest
 //
 //  Created by Gabriel Ribeiro on 13/05/26.
@@ -189,3 +189,4 @@ extension Character {
         )
     }()
 }
+

@@ -12,29 +12,42 @@ struct CharactersListView: View {
 
     @Binding var selectedCharacter: Character?
     @State private var viewModel: CharactersViewModel
+    @Environment(\.houseManager) private var houseManager
 
-    init(favoritesManager: FavoritesManager, selectedCharacter: Binding<Character?>) {
-        self._viewModel = State(initialValue: CharactersViewModel(favoritesManager: favoritesManager))
+    init(
+        favoritesManager: FavoritesManager,
+        houseManager: HouseManager,
+        selectedCharacter: Binding<Character?>
+    ) {
+        self._viewModel = State(initialValue: CharactersViewModel(
+            favoritesManager: favoritesManager,
+            houseManager: houseManager
+        ))
         self._selectedCharacter = selectedCharacter
     }
 
     var body: some View {
         stateView
+            .background(houseManager.gradientBackground)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Picker("Characters filter", selection: $viewModel.activeFilter) {
-                        ForEach(ListFilter.allCases, id: \.self) {
-                            Text($0.title)
-                                .tag($0)
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu(viewModel.preferredHouseTitle) {
+                        ForEach(House.allCases, id: \.self) { house in
+                            Button {
+                                viewModel.setPreferredHouse(house)
+                            } label: {
+                                Text(house.title)
+                            }
                         }
                     }
-                    .pickerStyle(.segmented)
                 }
             }
             .task {
                 if viewModel.dataState.isInitial {
                     await viewModel.fetchCharacters()
                 }
+                await viewModel.fetchPreferredHouse()
             }
             .onChange(of: viewModel.activeFilter) { old, new in
                 guard old != new else { return }
@@ -72,11 +85,27 @@ struct CharactersListView: View {
             .contentShape(Rectangle())
             .listRowSeparator(.hidden)
             .listRowInsets(.vertical, 4)
+            .listRowBackground(Color.clear)
             .onTapGesture {
                 selectedCharacter = character
             }
         }
         .listStyle(.plain)
+        .safeAreaBar(edge: .top) {
+            Picker("Characters filter", selection: $viewModel.activeFilter) {
+                ForEach(ListFilter.allCases, id: \.self) {
+                    Text($0.title)
+                        .tag($0)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding()
+        }
+        .overlay {
+            if (viewModel.dataState.data ?? []).isEmpty {
+                emptyView
+            }
+        }
         .refreshable {
             await viewModel.fetchCharacters()
         }
