@@ -23,7 +23,7 @@ struct CharactersListView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Picker("Characters filter", selection: $viewModel.activeFilter) {
-                        ForEach(CharacterFilter.allCases, id: \.self) {
+                        ForEach(ListFilter.allCases, id: \.self) {
                             Text($0.title)
                                 .tag($0)
                         }

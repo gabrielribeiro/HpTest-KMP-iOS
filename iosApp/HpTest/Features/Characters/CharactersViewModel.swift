@@ -17,7 +17,7 @@ final class CharactersViewModel {
     /// State fetched from the API (unfiltered).
     private(set) var dataState: DataState<[Character]> = .initial
 
-    var activeFilter: CharacterFilter = .all
+    var activeFilter: ListFilter = .all
 
     // MARK: - Dependencies
 
@@ -52,7 +52,7 @@ final class CharactersViewModel {
         }
 
         do {
-            let result: NetworkResult<NSArray> = try await repository.fetchCharacters(filter: activeFilter)
+            let result: NetworkResult<NSArray> = try await repository.fetchCharacters(filter: activeFilter.apiFilter ?? .all)
 
             if let data = result.successData {
                 let dtos: [CharacterDTO] = data.compactMap { $0 as? CharacterDTO }
@@ -62,7 +62,13 @@ final class CharactersViewModel {
                     return
                 }
 
-                let characters = dtos.compactMap(Character.init)
+                var characters = dtos.compactMap(Character.init)
+
+                if activeFilter == .favorites {
+                    characters = characters.filter {
+                        isFavorite(characterId: $0.id)
+                    }
+                }
 
                 withAnimation {
                     dataState = .ready(characters)
@@ -86,6 +92,8 @@ final class CharactersViewModel {
     /// - Parameter characterId: The unique identifier of the character
     func toggleFavorite(for characterId: String) {
         favoritesManager.toggleFavorite(characterId: characterId)
+
+        filterFavorites()
     }
 
     /// Checks if a character is marked as favorite.
@@ -95,20 +103,47 @@ final class CharactersViewModel {
     func isFavorite(characterId: String) -> Bool {
         favoritesManager.isFavorite(characterId: characterId)
     }
+
+    /// Filter local characters by favorite if activeFilter is favorites
+    private func filterFavorites() {
+        guard activeFilter == .favorites else {
+            return
+        }
+
+        if case let .ready(characters) = dataState {
+            let filteredCharacters = characters.filter {
+                isFavorite(characterId: $0.id)
+            }
+
+            withAnimation {
+                dataState = .ready(filteredCharacters)
+            }
+        }
+    }
 }
 
-extension CharacterFilter: CaseIterable {
-    public static var allCases: [CharacterFilter] {
-        [.all, .students, .staff]
-    }
+enum ListFilter: CaseIterable {
+    case all, students, staff, favorites
 
     var title: String {
         switch self {
             case .all: "All"
             case .students: "Students"
             case .staff: "Staff"
-            default: "Unknown"
+            case .favorites: "Favorites"
+        }
+    }
+
+    var apiFilter: CharacterFilter? {
+        switch self {
+            case .all:
+                CharacterFilter.all
+            case .students:
+                CharacterFilter.students
+            case .staff:
+                CharacterFilter.staff
+            case .favorites:
+                nil
         }
     }
 }
-
