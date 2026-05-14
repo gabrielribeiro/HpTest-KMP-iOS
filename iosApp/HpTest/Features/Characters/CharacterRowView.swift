@@ -38,7 +38,7 @@ struct CharacterRowView: View {
                                         .foregroundColor(.gray)
                                 )
                         @unknown default:
-                            EmptyView()
+                            Color.clear
                     }
                 }
             } else {
@@ -92,7 +92,7 @@ struct CharacterRowView: View {
 
 #Preview {
     CharacterRowView(
-        character: Character(name: "Test"),
+        character: Character.mock,
         isFavorite: false,
         onFavoriteToggle: {}
     )

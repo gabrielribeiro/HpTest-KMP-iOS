@@ -108,12 +108,30 @@ struct Character: Identifiable, Hashable {
         else { return nil }
         return url
     }
+
+    var displayHouse: String {
+        house.isEmpty ? "Unknown" : house
+    }
+
+    var hasAlternateNames: Bool {
+        !alternateNames.isEmpty
+    }
+
+    var alternateNamesFormatted: String {
+        alternateNames.joined(separator: "\n")
+    }
 }
 
 struct Wand: Hashable {
     let wood: String?
     let core: String?
     let length: Double?
+
+    init(wood: String?, core: String?, length: Double?) {
+        self.wood = wood
+        self.core = core
+        self.length = length
+    }
 
     init(from kmpWand: WandDTO) {
         self.wood = kmpWand.wood
@@ -134,4 +152,40 @@ struct Wand: Hashable {
         }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
+}
+
+extension Character {
+    static let mock: Character = {
+        Character(
+            id: "9e3f7ce4-b9a7-4244-b709-dae5c1f1d4a8",
+            name: "Harry Potter",
+            alternateNames: [
+                "The Boy Who Lived",
+                "The Chosen One",
+                "Undesirable No. 1",
+                "Potty"
+            ],
+            species: "human",
+            gender: "male",
+            house: "Gryffindor",
+            dateOfBirth: "31-07-1980",
+            yearOfBirth: 1980,
+            wizard: true,
+            ancestry: "half-blood",
+            eyeColour: "green",
+            hairColour: "black",
+            wand: Wand(
+                wood: "holly",
+                core: "phoenix tail feather",
+                length: 11
+            ),
+            patronus: "stag",
+            hogwartsStudent: true,
+            hogwartsStaff: false,
+            actor: "Daniel Radcliffe",
+            alternateActors: [],
+            alive: true,
+            image: "https://ik.imagekit.io/hpapi/harry.jpg"
+        )
+    }()
 }
