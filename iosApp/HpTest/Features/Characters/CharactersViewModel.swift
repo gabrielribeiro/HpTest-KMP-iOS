@@ -19,13 +19,22 @@ final class CharactersViewModel {
 
     var activeFilter: CharacterFilter = .all
 
+    // MARK: - Dependencies
+
     /// KMP repository
     private let repository: CharacterRepository
+    private let favoritesManager: FavoritesManager
 
     // MARK: - Initialization
 
-    init(repository: CharacterRepository = CharacterRepository()) {
+    /// Creates a new CharactersViewModel.
+    ///
+    /// - Parameters:
+    ///   - repository: The KMP repository for fetching characters
+    ///   - favoritesManager: Manager for tracking favorite characters
+    init(repository: CharacterRepository = CharacterRepository(), favoritesManager: FavoritesManager) {
         self.repository = repository
+        self.favoritesManager = favoritesManager
     }
 
     // MARK: - Public Methods
@@ -70,6 +79,21 @@ final class CharactersViewModel {
         }
 
         loadingTask.cancel()
+    }
+
+    /// Toggles the favorite status of a character.
+    ///
+    /// - Parameter characterId: The unique identifier of the character
+    func toggleFavorite(for characterId: String) {
+        favoritesManager.toggleFavorite(characterId: characterId)
+    }
+
+    /// Checks if a character is marked as favorite.
+    ///
+    /// - Parameter characterId: The unique identifier of the character
+    /// - Returns: true if the character is favorited
+    func isFavorite(characterId: String) -> Bool {
+        favoritesManager.isFavorite(characterId: characterId)
     }
 }
 

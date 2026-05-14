@@ -11,7 +11,12 @@ import shared
 struct CharactersListView: View {
 
     @Binding var selectedCharacter: Character?
-    @State private var viewModel = CharactersViewModel()
+    @State private var viewModel: CharactersViewModel
+
+    init(favoritesManager: FavoritesManager, selectedCharacter: Binding<Character?>) {
+        self._viewModel = State(initialValue: CharactersViewModel(favoritesManager: favoritesManager))
+        self._selectedCharacter = selectedCharacter
+    }
 
     var body: some View {
         stateView
@@ -57,13 +62,19 @@ struct CharactersListView: View {
     @ViewBuilder
     private var listView: some View {
         List(viewModel.dataState.data ?? [], selection: $selectedCharacter) { character in
-            CharacterRowView(character: character)
-                .contentShape(Rectangle())
-                .listRowSeparator(.hidden)
-                .listRowInsets(.vertical, 4)
-                .onTapGesture {
-                    selectedCharacter = character
+            CharacterRowView(
+                character: character,
+                isFavorite: viewModel.isFavorite(characterId: character.id),
+                onFavoriteToggle: {
+                    viewModel.toggleFavorite(for: character.id)
                 }
+            )
+            .contentShape(Rectangle())
+            .listRowSeparator(.hidden)
+            .listRowInsets(.vertical, 4)
+            .onTapGesture {
+                selectedCharacter = character
+            }
         }
         .listStyle(.plain)
         .refreshable {

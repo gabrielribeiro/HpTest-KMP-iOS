@@ -10,10 +10,11 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var selectedCharacter: Character?
+    @Environment(\.favoritesManager) private var favoritesManager
 
     var body: some View {
         NavigationSplitView {
-            CharactersListView(selectedCharacter: $selectedCharacter)
+            CharactersListView(favoritesManager: favoritesManager, selectedCharacter: $selectedCharacter)
         } detail: {
             if let selectedCharacter {
                 Text(selectedCharacter.name)

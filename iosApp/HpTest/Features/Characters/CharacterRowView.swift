@@ -9,7 +9,11 @@ import SwiftUI
 import CachedAsyncImage
 
 struct CharacterRowView: View {
+
+    // MARK: - Properties
     let character: Character
+    let isFavorite: Bool
+    let onFavoriteToggle: () -> Void
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
@@ -70,12 +74,12 @@ struct CharacterRowView: View {
 
             Spacer()
 
-            Button("Favorite", systemImage: "heart") {
-                // Favorite
+            Button("Favorite", systemImage: isFavorite ? "heart.fill" : "heart") {
+                onFavoriteToggle()
             }
-            .buttonStyle(.glass)
-            .buttonBorderShape(.circle)
-            .controlSize(.small)
+            .foregroundStyle(.pink)
+            .buttonStyle(.plain)
+            .controlSize(.regular)
             .labelStyle(.iconOnly)
             .frame(maxHeight: .infinity, alignment: .top)
         }
@@ -87,5 +91,9 @@ struct CharacterRowView: View {
 }
 
 #Preview {
-    CharacterRowView(character: Character(name: "Test"))
+    CharacterRowView(
+        character: Character(name: "Test"),
+        isFavorite: false,
+        onFavoriteToggle: {}
+    )
 }
