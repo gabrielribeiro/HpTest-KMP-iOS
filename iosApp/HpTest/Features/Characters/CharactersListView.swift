@@ -6,13 +6,21 @@
 //
 
 import SwiftUI
+import PhotosUI
 import shared
 
 struct CharactersListView: View {
 
     @Binding var selectedCharacter: Character?
     @State private var viewModel: CharactersViewModel
+
+    @State private var showPhotoOptions: Bool = false
+    @State private var showPhotoLibrary = false
+    @State private var showCamera = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+
     @Environment(\.houseManager) private var houseManager
+    @Environment(\.profileImageStore) private var profileImageStore
 
     init(
         favoritesManager: FavoritesManager,
@@ -29,7 +37,7 @@ struct CharactersListView: View {
     var body: some View {
         stateView
             .background(houseManager.gradientBackground)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu(viewModel.preferredHouseTitle) {
@@ -41,6 +49,30 @@ struct CharactersListView: View {
                             }
                         }
                     }
+                }
+
+                ToolbarItem(placement: .topBarTrailing)  {
+                    profileImageButton
+                        .confirmationDialog("Profile Picture", isPresented: $showPhotoOptions) {
+                            Button("Take Picture") {
+                                showCamera = true
+                            }
+                            .disabled(!CameraPicker.isAvailable)
+
+                            Button("Choose from Library") {
+                                showPhotoLibrary = true
+                            }
+
+                            if profileImageStore.profileImage != nil {
+                                Button("Remove Picture", role: .destructive) {
+                                    profileImageStore.clearProfileImage()
+                                }
+                            }
+
+                            Button("Cancel", role: .cancel) { }
+                        } message: {
+                            Text("Set your profile picture")
+                        }
                 }
             }
             .task {
@@ -54,6 +86,22 @@ struct CharactersListView: View {
                 
                 Task {
                     await viewModel.fetchCharacters()
+                }
+            }
+            .fullScreenCover(isPresented: $showCamera) {
+                CameraPicker { image in
+                    profileImageStore.saveProfileImage(image)
+                }
+                .ignoresSafeArea()
+            }
+            .photosPicker(isPresented: $showPhotoLibrary, selection: $selectedPhotoItem, matching: .images)
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                Task {
+                    if let newItem = newItem,
+                       let data = try? await newItem.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        profileImageStore.saveProfileImage(uiImage)
+                    }
                 }
             }
     }
@@ -147,5 +195,25 @@ struct CharactersListView: View {
             systemImage: "person.slash",
             description: Text("Try changing your filter")
         )
+    }
+
+    @ViewBuilder
+    private var profileImageButton: some View {
+        Button(action: {
+            showPhotoOptions = true
+        }) {
+            Group {
+                if let profileImage = profileImageStore.profileImage {
+                    Image(uiImage: profileImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 36, height: 36)
+                        .clipShape(Circle())
+                } else {
+                    Image(systemName: "person")
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
