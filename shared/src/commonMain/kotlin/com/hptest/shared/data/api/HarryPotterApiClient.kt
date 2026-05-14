@@ -1,6 +1,6 @@
 package com.hptest.shared.data.api
 
-import com.hptest.shared.domain.models.Character
+import com.hptest.shared.domain.models.CharacterDTO
 import com.hptest.shared.utils.NetworkResult
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -77,17 +77,25 @@ class HarryPotterApiClient {
      *
      * Uses automatic retry logic for transient failures (server errors, timeouts).
      *
-     * @return NetworkResult.Success with list of characters, or NetworkResult.Error on failure
+     * @return NetworkResult.Success with list of character DTOs, or NetworkResult.Error on failure
      */
-    suspend fun fetchCharacters(): NetworkResult<List<Character>> {
+    suspend fun fetchCharacters(): NetworkResult<List<CharacterDTO>> {
         return try {
-            val characters: List<Character> = httpClient.get(CHARACTERS_ENDPOINT).body()
+            val characters: List<CharacterDTO> = httpClient.get(CHARACTERS_ENDPOINT).body()
 
             NetworkResult.Success(characters)
         } catch (e: Exception) {
+            val errorCode = when (e) {
+                is ClientRequestException -> "CLIENT_ERROR_${e.response.status.value}"
+                is ServerResponseException -> "SERVER_ERROR_${e.response.status.value}"
+                is HttpRequestTimeoutException -> "TIMEOUT"
+                is SerializationException -> "SERIALIZATION_ERROR"
+                else -> "NETWORK_ERROR"
+            }
+
             NetworkResult.Error(
-                exception = e,
-                message = mapExceptionToUserMessage(e)
+                message = mapExceptionToUserMessage(e),
+                code = errorCode
             )
         }
     }

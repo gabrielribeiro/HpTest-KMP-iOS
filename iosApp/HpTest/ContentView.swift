@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var selectedCharacter: Character?
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationSplitView {
+            CharactersListView(selectedCharacter: $selectedCharacter)
+        } detail: {
+            if let selectedCharacter {
+                Text(selectedCharacter.name)
+            } else {
+                // Empty state when no character is selected
+                ContentUnavailableView(
+                    "Select a Character",
+                    systemImage: "person.crop.circle",
+                    description: Text("Choose a character from the list to see their details")
+                )
+            }
         }
-        .padding()
     }
 }
 

@@ -2,7 +2,7 @@ package com.hptest.shared.data.repository
 
 import com.hptest.shared.data.api.HarryPotterApiClient
 import com.hptest.shared.domain.filters.CharacterFilter
-import com.hptest.shared.domain.models.Character
+import com.hptest.shared.domain.models.CharacterDTO
 import com.hptest.shared.utils.NetworkResult
 
 /**
@@ -24,7 +24,7 @@ class CharacterRepository {
      * Fetches all characters from the API.
      * This is a suspend function that should be called from a coroutine scope.
      *
-     * @return NetworkResult.Success containing a list of all characters,
+     * @return NetworkResult.Success containing a list of all character DTOs,
      *         or NetworkResult.Error if the request fails
      *
      * Example usage:
@@ -37,7 +37,7 @@ class CharacterRepository {
      * }
      * ```
      */
-    suspend fun fetchCharacters(): NetworkResult<List<Character>> {
+    suspend fun fetchCharacters(): NetworkResult<List<CharacterDTO>> {
         return apiClient.fetchCharacters()
     }
 

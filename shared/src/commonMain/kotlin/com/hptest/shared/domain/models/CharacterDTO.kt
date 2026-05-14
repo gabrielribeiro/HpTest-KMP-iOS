@@ -3,8 +3,10 @@ package com.hptest.shared.domain.models
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a character from the Harry Potter universe.
+ * Data Transfer Object representing a character from the Harry Potter universe.
  * Maps directly to the API response structure from hp-api.onrender.com
+ *
+ * This DTO should be mapped to a domain model in the presentation layer.
  *
  * @property id Unique identifier for the character
  * @property name Full name of the character
@@ -28,7 +30,7 @@ import kotlinx.serialization.Serializable
  * @property image URL to character image
  */
 @Serializable
-data class Character(
+data class CharacterDTO(
     val id: String,
     val name: String,
     val alternateNames: List<String> = emptyList(),
@@ -41,7 +43,7 @@ data class Character(
     val ancestry: String?,
     val eyeColour: String?,
     val hairColour: String?,
-    val wand: Wand?,
+    val wand: WandDTO?,
     val patronus: String?,
     val hogwartsStudent: Boolean,
     val hogwartsStaff: Boolean,

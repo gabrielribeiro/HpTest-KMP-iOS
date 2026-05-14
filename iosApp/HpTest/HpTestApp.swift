@@ -6,16 +6,12 @@
 //
 
 import SwiftUI
-import shared
 
 @main
 struct HpTestApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onAppear {
-                    print(Greeting().greet())
-                }
         }
     }
 }

@@ -17,19 +17,13 @@ sealed class NetworkResult<out T> {
     /**
      * Represents a failed network operation with an error.
      *
-     * @property exception The exception that caused the failure
-     * @property message A human-readable error message
+     * @property message A human-readable error message for display to users
+     * @property code Optional error code for programmatic handling
      */
     data class Error(
-        val exception: Exception,
-        val message: String = exception.message ?: "An unknown error occurred"
+        val message: String,
+        val code: String? = null
     ) : NetworkResult<Nothing>()
-
-    /**
-     * Represents a loading state (useful for UI state management).
-     * Not currently used in repository but available for future enhancements.
-     */
-    object Loading : NetworkResult<Nothing>()
 
     /**
      * Returns true if this result is a Success.
@@ -50,12 +44,20 @@ sealed class NetworkResult<out T> {
     }
 
     /**
-     * Returns the data if Success, or throws the exception if Error.
-     * @throws Exception if this is an Error result
+     * Returns the error message if Error, or null otherwise.
      */
-    fun getOrThrow(): T = when (this) {
-        is Success -> data
-        is Error -> throw exception
-        is Loading -> throw IllegalStateException("Cannot get data from Loading state")
-    }
+    val errorMessage: String?
+        get() = (this as? Error)?.message
+
+    /**
+     * Returns the error code if Error, or null otherwise.
+     */
+    val errorCode: String?
+        get() = (this as? Error)?.code
+
+    /**
+     * Returns the success data if Success, or null otherwise.
+     */
+    val successData: T?
+        get() = (this as? Success)?.data
 }
