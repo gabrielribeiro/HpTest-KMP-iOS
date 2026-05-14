@@ -17,7 +17,7 @@ struct ContentView: View {
             CharactersListView(favoritesManager: favoritesManager, selectedCharacter: $selectedCharacter)
         } detail: {
             if let selectedCharacter {
-                Text(selectedCharacter.name)
+                CharacterDetailView(favoritesManager: favoritesManager, character: selectedCharacter)
             } else {
                 // Empty state when no character is selected
                 ContentUnavailableView(

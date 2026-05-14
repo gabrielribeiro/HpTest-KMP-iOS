@@ -49,11 +49,15 @@ final class FavoritesManager {
     /// If the character is currently favorited, it will be unfavorited, and vice versa.
     ///
     /// - Parameter characterId: The unique identifier of the character
-    func toggleFavorite(characterId: String) {
+    /// - Returns: true if the character is in the favorites set
+    @discardableResult
+    func toggleFavorite(characterId: String) -> Bool{
         if favoriteCharacterIds.contains(characterId) {
             favoriteCharacterIds.remove(characterId)
+            return false
         } else {
             favoriteCharacterIds.insert(characterId)
+            return true
         }
     }
 
