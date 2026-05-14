@@ -15,13 +15,7 @@ final class CharactersViewModel {
     // MARK: - Properties
 
     /// All characters fetched from the API (unfiltered).
-    private(set) var allCharacters: [Character] = []
-
-    /// Current loading state.
-    private(set) var isLoading: Bool = false
-
-    /// Error message if the fetch failed.
-    private(set) var errorMessage: String?
+    private(set) var dataState: DataState<[Character]> = .initial
 
     /// KMP repository
     private let repository: CharacterRepository
@@ -36,10 +30,15 @@ final class CharactersViewModel {
 
     /// Fetches all characters from the API
     func fetchCharacters() async {
-        isLoading = true
-        errorMessage = nil
+        let loadingTask = Task {
+            guard self.dataState == .initial else {
+                return
+            }
 
-        defer { isLoading = false }
+            try await Task.sleep(nanoseconds: 150_000_000)
+
+            self.dataState = .loading
+        }
 
         do {
             let result: NetworkResult<NSArray> = try await repository.fetchCharacters()
@@ -48,29 +47,25 @@ final class CharactersViewModel {
                 let dtos: [CharacterDTO] = data.compactMap { $0 as? CharacterDTO }
 
                 guard !dtos.isEmpty else {
-                    errorMessage = "No characters available."
-                    allCharacters = []
+                    dataState = .error("No characters available.")
                     return
                 }
 
                 let characters = dtos.compactMap(Character.init)
 
-                allCharacters = characters
-                errorMessage = nil
+                dataState = .ready(characters)
             } else if let message = result.errorMessage {
-                errorMessage = message
-                allCharacters = []
+                dataState = .error(message)
             } else {
-                errorMessage = "Unknown response from server."
-                allCharacters = []
+                dataState = .error("Unknown response from server.")
             }
         } catch is CancellationError {
-            allCharacters = []
-            errorMessage = "Operation has been cancelled."
+            dataState = .error("Operation has been cancelled.")
         } catch {
-            errorMessage = "Failed to fetch characters: \(error.localizedDescription)"
-            allCharacters = []
+            dataState = .error("Failed to fetch characters: \(error.localizedDescription)")
         }
+
+        loadingTask.cancel()
     }
 }
 

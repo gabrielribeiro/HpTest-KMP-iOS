@@ -13,19 +13,80 @@ struct CharactersListView: View {
     @State private var viewModel = CharactersViewModel()
 
     var body: some View {
-        List(viewModel.allCharacters, selection: $selectedCharacter) { character in
-            Text(character.name)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                selectedCharacter = character
+        stateView
+            .task {
+                if viewModel.dataState.isInitial {
+                    await viewModel.fetchCharacters()
+                }
             }
+    }
+
+    @ViewBuilder
+    private var stateView: some View {
+        switch viewModel.dataState {
+            case .initial:
+                Color.clear
+            case .loading:
+                loadingView
+            case .ready:
+                listView
+            case .error(let errorMessage):
+                errorView(errorMessage)
+        }
+    }
+
+    @ViewBuilder
+    private var listView: some View {
+        List(viewModel.dataState.data ?? [], selection: $selectedCharacter) { character in
+            CharacterRowView(character: character)
+                .contentShape(Rectangle())
+                .listRowSeparator(.hidden)
+                .listRowInsets(.vertical, 4)
+                .onTapGesture {
+                    selectedCharacter = character
+                }
         }
         .listStyle(.plain)
-        .task {
-            // Fetch characters when view appears
-            if viewModel.allCharacters.isEmpty {
-                await viewModel.fetchCharacters()
-            }
+        .refreshable {
+            await viewModel.fetchCharacters()
         }
+    }
+
+    @ViewBuilder
+    private var loadingView: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .scaleEffect(1.5)
+            Text("Loading characters...")
+                .font(.headline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    private func errorView(_ message: String) -> some View {
+        ContentUnavailableView {
+            Label("Failed to Load", systemImage: "exclamationmark.triangle")
+        } description: {
+            Text(message)
+                .multilineTextAlignment(.center)
+        } actions: {
+            Button("Retry") {
+                Task {
+                    await viewModel.fetchCharacters()
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
+    @ViewBuilder
+    private var emptyView: some View {
+        ContentUnavailableView(
+            "No Characters Found",
+            systemImage: "person.slash",
+            description: Text("Try changing your filter")
+        )
     }
 }

@@ -30,6 +30,50 @@ struct Character: Identifiable, Hashable {
     let alive: Bool
     let image: String
 
+    init(
+        id: String = UUID().uuidString,
+        name: String = "",
+        alternateNames: [String] = [],
+        species: String? = nil,
+        gender: String? = nil,
+        house: String = "",
+        dateOfBirth: String? = nil,
+        yearOfBirth: Int32? = nil,
+        wizard: Bool = false,
+        ancestry: String? = nil,
+        eyeColour: String? = nil,
+        hairColour: String? = nil,
+        wand: Wand? = nil,
+        patronus: String? = nil,
+        hogwartsStudent: Bool = false,
+        hogwartsStaff: Bool = false,
+        actor: String? = nil,
+        alternateActors: [String] = [],
+        alive: Bool = false,
+        image: String = ""
+    ) {
+        self.id = id
+        self.name = name
+        self.alternateNames = alternateNames
+        self.species = species
+        self.gender = gender
+        self.house = house
+        self.dateOfBirth = dateOfBirth
+        self.yearOfBirth = yearOfBirth
+        self.wizard = wizard
+        self.ancestry = ancestry
+        self.eyeColour = eyeColour
+        self.hairColour = hairColour
+        self.wand = wand
+        self.patronus = patronus
+        self.hogwartsStudent = hogwartsStudent
+        self.hogwartsStaff = hogwartsStaff
+        self.actor = actor
+        self.alternateActors = alternateActors
+        self.alive = alive
+        self.image = image
+    }
+
     init(from kmpCharacter: CharacterDTO) {
         self.id = kmpCharacter.id
         self.name = kmpCharacter.name
