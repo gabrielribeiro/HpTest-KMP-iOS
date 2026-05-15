@@ -62,6 +62,14 @@ HpTest-KMP-iOS/
 
 ### Technology Stack
 
+#### Why KMP + Native SwiftUI?
+
+This challenge intentionally uses:
+- KMP for networking, domain, and shared business logic
+- Native SwiftUI for platform-native UX and faster iteration
+
+This approach keeps business logic reusable while preserving the best Apple-platform user experience.
+
 **Shared (KMP)**
 - **Language**: Kotlin 1.9.21
 - **Networking**: Ktor 2.3.7 (with automatic retry, timeout handling)
