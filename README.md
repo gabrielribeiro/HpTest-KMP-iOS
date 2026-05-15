@@ -4,13 +4,11 @@ A modern iOS application showcasing Harry Potter characters using Kotlin Multipl
 
 ## Demo
 
-**Note**: Demo videos are available in the repository for download due to GitHub's file size limitations.
-
 ### iPhone Demo
-[Watch iPhone Demo](https://github.com/gabrielribeiro/HpTest-KMP-iOS/raw/main/iPhoneDemo.mp4)
+https://github.com/user-attachments/assets/4ef19729-b484-4482-ac6a-6996db87f962
 
 ### iPad Demo
-[Watch iPad Demo](https://github.com/gabrielribeiro/HpTest-KMP-iOS/raw/main/iPadDemo.mp4)
+https://github.com/user-attachments/assets/a3f3fa7b-12ab-4a3c-b18a-b5e505ec66d3
 
 ## Features
 
