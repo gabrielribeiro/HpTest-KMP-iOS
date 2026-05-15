@@ -5,10 +5,10 @@ A modern iOS application showcasing Harry Potter characters using Kotlin Multipl
 ## Demo
 
 ### iPhone Demo
-https://github.com/user-attachments/assets/4ef19729-b484-4482-ac6a-6996db87f962
+https://github.com/user-attachments/assets/a3f3fa7b-12ab-4a3c-b18a-b5e505ec66d3
 
 ### iPad Demo
-https://github.com/user-attachments/assets/a3f3fa7b-12ab-4a3c-b18a-b5e505ec66d3
+https://github.com/user-attachments/assets/4ef19729-b484-4482-ac6a-6996db87f962
 
 ## Features
 
