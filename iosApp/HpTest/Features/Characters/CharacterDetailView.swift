@@ -40,7 +40,7 @@ struct CharacterDetailView: View {
             }
         }
         .background(houseManager.gradientBackground)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .top)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Favorite", systemImage: isFavorite ? "heart.fill" : "heart") {

@@ -126,6 +126,7 @@ struct CharactersListView: View {
             CharacterRowView(
                 character: character,
                 isFavorite: viewModel.isFavorite(characterId: character.id),
+                isSelected: selectedCharacter?.id == character.id,
                 onFavoriteToggle: {
                     viewModel.toggleFavorite(for: character.id)
                 }
@@ -135,7 +136,9 @@ struct CharactersListView: View {
             .listRowInsets(.vertical, 4)
             .listRowBackground(Color.clear)
             .onTapGesture {
-                selectedCharacter = character
+                withAnimation {
+                    selectedCharacter = character
+                }
             }
         }
         .listStyle(.plain)

@@ -13,6 +13,7 @@ struct CharacterRowView: View {
     // MARK: - Properties
     let character: Character
     let isFavorite: Bool
+    let isSelected: Bool
     let onFavoriteToggle: () -> Void
     @Environment(\.houseManager) private var houseManager
 
@@ -85,16 +86,31 @@ struct CharacterRowView: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .padding()
-        .background(houseManager.cardBackground)
+        .background(isSelected ? houseManager.textColor.opacity(0.15) : houseManager.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(isSelected ? houseManager.textColor : Color.clear, lineWidth: 2)
+        )
         .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
 #Preview {
-    CharacterRowView(
-        character: Character.mock,
-        isFavorite: false,
-        onFavoriteToggle: {}
-    )
+    VStack {
+        CharacterRowView(
+            character: Character.mock,
+            isFavorite: false,
+            isSelected: false,
+            onFavoriteToggle: {}
+        )
+
+        CharacterRowView(
+            character: Character.mock,
+            isFavorite: true,
+            isSelected: true,
+            onFavoriteToggle: {}
+        )
+    }
+    .padding()
 }
